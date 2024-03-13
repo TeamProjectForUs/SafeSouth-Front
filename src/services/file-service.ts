@@ -1,5 +1,4 @@
-import apiClient from "./api-client";
-
+import axios from 'axios'
 interface IUpoloadResponse {
     url: string;
 }
@@ -9,7 +8,7 @@ export const uploadPhoto = async (photo: File) => {
         const formData = new FormData();
         if (photo) {
             formData.append("file", photo);
-            apiClient.post<IUpoloadResponse>('file?file=123.jpeg', formData, {
+            axios.post<IUpoloadResponse>('file?file=123.jpeg', formData, {
                 headers: {
                     'Content-Type': 'image/jpeg'
                 }

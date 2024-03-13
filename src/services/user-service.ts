@@ -1,5 +1,6 @@
 import { CredentialResponse } from "@react-oauth/google"
-import apiClient from "./api-client"
+import axios from 'axios'
+import { IToken } from "../@Types"
 
 export interface IUser {
     email: string,
@@ -14,7 +15,19 @@ export const registrUser = (user: IUser) => {
     return new Promise<IUser>((resolve, reject) => {
         console.log("Registering user...")
         console.log(user)
-        apiClient.post("/auth/register", user).then((response) => {
+        axios.post("/auth/register", user).then((response) => {
+            console.log(response)
+            resolve(response.data)
+        }).catch((error) => {
+            console.log(error)
+            reject(error)
+        })
+    })
+}
+export const loginUser = (email: string, password: string) => {
+    return new Promise<IToken>((resolve, reject) => {
+        console.log("Logging in user...")
+        axios.post("/auth/login", {email, password}).then((response) => {
             console.log(response)
             resolve(response.data)
         }).catch((error) => {
@@ -27,7 +40,7 @@ export const registrUser = (user: IUser) => {
 export const googleSignin = (credentialResponse: CredentialResponse) => {
     return new Promise<IUser>((resolve, reject) => {
         console.log("googleSignin ...")
-        apiClient.post("/auth/google", credentialResponse).then((response) => {
+        axios.post("/auth/google", credentialResponse).then((response) => {
             console.log(response)
             resolve(response.data)
         }).catch((error) => {

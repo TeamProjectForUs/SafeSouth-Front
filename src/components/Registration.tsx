@@ -5,6 +5,7 @@ import { faImage } from '@fortawesome/free-solid-svg-icons'
 import { uploadPhoto } from '../services/file-service'
 import { registrUser, googleSignin, IUser } from '../services/user-service'
 import { CredentialResponse, GoogleLogin } from '@react-oauth/google'
+import AlreadyLoggedGuard from '../guards/AlreadyLoggedguard'
 
 function Registration() {
     const [imgSrc, setImgSrc] = useState<File>()
@@ -52,7 +53,7 @@ function Registration() {
     }
     return (
         <div className="vstack gap-3 col-md-7 mx-auto">
-            <h1>Register</h1>
+            <h1 className='text-center p-2 font-bold text-[32px]'>Register</h1>
             <div className="d-flex justify-content-center position-relative">
                 <img src={imgSrc ? URL.createObjectURL(imgSrc) : avatar} style={{ height: "230px", width: "230px" }} className="img-fluid" />
                 <button type="button" className="btn position-absolute bottom-0 end-0" onClick={selectImg}>
@@ -70,10 +71,10 @@ function Registration() {
                 <input ref={passwordInputRef} type="password" className="form-control" id="floatingPassword" placeholder="" />
                 <label htmlFor="floatingPassword">Password</label>
             </div>
-            <button type="button" className="btn btn-primary" onClick={register}>Register</button>
+            <button type="button" className="text-white bg-[var(--color-green-light-2)] font-bold text-[20px] hover:opacity-[0.8] p-2 rounded-md" onClick={register}>Register</button>
 
             <GoogleLogin onSuccess={onGoogleLoginSuccess} onError={onGoogleLoginFailure} />
         </div>)
 }
 
-export default Registration
+export default AlreadyLoggedGuard(Registration)
