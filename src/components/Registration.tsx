@@ -3,15 +3,18 @@ import avatar from '../assets/avatar.jpeg'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faImage } from '@fortawesome/free-solid-svg-icons'
 import { uploadPhoto } from '../services/file-service'
-import { registrUser, googleSignin, IUser } from '../services/user-service'
+import { registrUser, googleSignin } from '../services/user-service'
 import { CredentialResponse, GoogleLogin } from '@react-oauth/google'
 import AlreadyLoggedGuard from '../guards/AlreadyLoggedguard'
+import { IUser } from '../@Types'
 
 function Registration() {
     const [imgSrc, setImgSrc] = useState<File>()
 
     const fileInputRef = useRef<HTMLInputElement>(null)
     const emailInputRef = useRef<HTMLInputElement>(null)
+    const firstNameRef = useRef<HTMLInputElement>(null)
+    const lastNameRef = useRef<HTMLInputElement>(null)
     const passwordInputRef = useRef<HTMLInputElement>(null)
     const imgSelected = (e: ChangeEvent<HTMLInputElement>) => {
         console.log(e.target.value)
@@ -27,11 +30,15 @@ function Registration() {
     const register = async () => {
         const url = await uploadPhoto(imgSrc!);
         console.log("upload returned:" + url);
-        if (emailInputRef.current?.value && passwordInputRef.current?.value) {
+        if (emailInputRef.current?.value && passwordInputRef.current?.value
+            && firstNameRef?.current?.value && lastNameRef?.current?.value) {
             const user: IUser = {
                 email: emailInputRef.current?.value,
                 password: passwordInputRef.current?.value,
-                imgUrl: url
+                first_name: firstNameRef.current?.value,
+                last_name: lastNameRef.current?.value,
+                imgUrl: url,
+                posts:[],
             }
             const res = await registrUser(user)
             console.log(res)
@@ -67,6 +74,16 @@ function Registration() {
                 <input ref={emailInputRef} type="text" className="form-control" id="floatingInput" placeholder="" />
                 <label htmlFor="floatingInput">Email</label>
             </div>
+            <div className="form-floating">
+                <input ref={emailInputRef} type="text" className="form-control" id="floatingInput" placeholder="" />
+                <label htmlFor="floatingInput">First name</label>
+            </div>
+
+            <div className="form-floating">
+                <input ref={emailInputRef} type="text" className="form-control" id="floatingInput" placeholder="" />
+                <label htmlFor="floatingInput">Last name</label>
+            </div>
+
             <div className="form-floating">
                 <input ref={passwordInputRef} type="password" className="form-control" id="floatingPassword" placeholder="" />
                 <label htmlFor="floatingPassword">Password</label>

@@ -1,17 +1,9 @@
 import { CredentialResponse } from "@react-oauth/google"
 import axios from 'axios'
-import { IToken } from "../@Types"
+import { IToken, IUser } from "../@Types"
 
-export interface IUser {
-    email: string,
-    password?: string,
-    imgUrl?: string,
-    _id?: string,
-    accessToken?: string,
-    refreshToken?: string
-}
 
-export const registrUser = (user: IUser) => {
+export const registrUser = (user: Partial<IUser>) => {
     return new Promise<IUser>((resolve, reject) => {
         console.log("Registering user...")
         console.log(user)

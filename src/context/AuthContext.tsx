@@ -1,16 +1,14 @@
 import React, { ReactNode, useEffect, useState } from "react";
-import { IUser } from "../services/user-service";
-import { IToken } from "../@Types";
+import { IToken, IUserWithPosts } from "../@Types";
 import axios from "axios";
 
 export interface IAuthContext {
     loading: boolean
     setLoading: (b: boolean) => void
-    user: IUser | null
+    user: IUserWithPosts | null
     token: IToken | null
-    setUser: (user: IUser) => void
+    setUser: (user: IUserWithPosts) => void
     setToken: (token: IToken) => void
-
     logOut: () => void
 }
 
@@ -19,8 +17,7 @@ const AuthContext = React.createContext<IAuthContext | null>(null)
 
 export function AuthContextProvider({ children } : {children: ReactNode}) {
 
-
-    const [user,setUser] = useState<IUser | null>(null)
+    const [user,setUser] = useState<IUserWithPosts | null>(null)
     const [loading,setLoading] = useState<boolean>(true)
     const [token,setToken] = useState<IToken | null>(null)
     useEffect(() => {
@@ -28,7 +25,7 @@ export function AuthContextProvider({ children } : {children: ReactNode}) {
         if(t) {
             setToken(JSON.parse(t))
         }
-    },[])
+    }, [])
 
     useEffect(() => {
         if(token) {
@@ -37,13 +34,15 @@ export function AuthContextProvider({ children } : {children: ReactNode}) {
                 try {
                     const res = await axios.get("/auth/me")
                     if(res.data) {
-                        setUser(res.data as IUser)
+                        setUser(res.data as IUserWithPosts)
                     }
                 }catch(e) {}
-                setLoading(false)
+                finally {
+                    setLoading(false)
+                }
             }
             fetchUser()
-         }else {
+         } else {
             setLoading(false)
         }
     },[token])
