@@ -33,6 +33,7 @@ export function AuthContextProvider({ children } : {children: ReactNode}) {
             const fetchUser = async () => {
                 try {
                     const res = await axios.get("/auth/me")
+                    console.log(res.data)
                     if(res.data) {
                         setUser(res.data as IUserWithPosts)
                     }

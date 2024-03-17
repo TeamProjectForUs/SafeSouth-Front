@@ -48,4 +48,4 @@ const deleteComment = async (commentId: string) => {
     return { res: await req, abort: () => abortController.abort() }
 }
 
-export default { getAllPosts, deleteComment, addComment, addPost, editPost, deletePost }
+export { getAllPosts, deleteComment, addComment, addPost, editPost, deletePost }

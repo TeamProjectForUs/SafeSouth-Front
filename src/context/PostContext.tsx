@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { IComment, ICommentWithUser, IPost, IPostWithOwner } from "../@Types";
-import postService from "../services/post-service";
+import * as postService from "../services/post-service";
 import { useAuth } from "./AuthContext";
 export interface IPostContext {
     posts: IPostWithOwner[],
@@ -13,10 +13,17 @@ export interface IPostContext {
 
 const PostContext = React.createContext<IPostContext | null>(null)
 
+const normalizePosts = (posts: IPostWithOwner[] ) => {
+   return posts.map(p => {
+        p['date_end'] = new Date(p['date_end'])
+        p['date_start'] = new Date(p['date_start'])
+        return p
+    })
+}
 
 export const PostContextProvider = ({children} : {children: React.ReactNode}) => {
     const [posts, setPosts] = useState<IPostWithOwner[]>([])
-    const {user} = useAuth()
+    const {user, setUser} = useAuth()
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -24,7 +31,7 @@ export const PostContextProvider = ({children} : {children: React.ReactNode}) =>
                     const res = (await postService.getAllPosts()).res
                     if(res.data) {
                         const posts = res.data
-                        setPosts(posts)
+                        setPosts(normalizePosts(posts))
                     }
                 } catch(e) {
                     console.error(e)    
@@ -72,7 +79,9 @@ export const PostContextProvider = ({children} : {children: React.ReactNode}) =>
            const res = (await postService.addPost(post, imageFile)).res
            if(res.data) {
             const posted = res.data
-            setPosts([...posts, posted])
+            setPosts(normalizePosts([...posts, posted]))
+            if(user)
+                setUser({...user, posts:normalizePosts([...user.posts, posted] as any)})
             return posted
            }
         } catch(e) {
@@ -86,7 +95,9 @@ export const PostContextProvider = ({children} : {children: React.ReactNode}) =>
            const res = (await postService.editPost(post, imageFile)).res
            if(res.data) {
             const posted = res.data
-            setPosts(posts.map(p => p._id === post._id ? res.data :p))
+            setPosts(normalizePosts(posts.map(p => p._id === post._id ? res.data :p)))
+            if(user)
+                setUser({...user, posts: normalizePosts(user.posts.map(p => p._id === post._id ? res.data :p) as any)})
             return posted
            }
         } catch(e) {
@@ -101,7 +112,9 @@ export const PostContextProvider = ({children} : {children: React.ReactNode}) =>
            const res = (await postService.deletePost(postId)).res
            if(res.data) {
                 const deleted = res.data
-                setPosts(posts.filter(p => p._id !== postId))
+                setPosts(normalizePosts(posts.filter(p => p._id !== postId)))
+                if(user)
+                    setUser({...user, posts: normalizePosts(user.posts.filter(p => p._id !== postId ) as any)})
                 return deleted
            }
         } catch(e) {

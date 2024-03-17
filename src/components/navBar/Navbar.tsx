@@ -39,9 +39,9 @@ export default function Navbar() {
     }, [user, loading])
 
    return  <nav className={navBarStyle}>
-    <div className=" font-bold text-[black]">
+    <Link to="/" className=" font-bold text-[black]">
         SafeSouth
-    </div>
+    </Link>
     <div>
         <AuthButtons/>
     </div>

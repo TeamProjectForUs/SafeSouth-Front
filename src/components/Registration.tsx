@@ -7,11 +7,16 @@ import { registrUser, googleSignin } from '../services/user-service'
 import { CredentialResponse, GoogleLogin } from '@react-oauth/google'
 import AlreadyLoggedGuard from '../guards/AlreadyLoggedguard'
 import { IUser } from '../@Types'
+import Spinner from './Spinner'
+import { toast } from 'react-toastify'
+import { useNavigate } from 'react-router'
 
 function Registration() {
     const [imgSrc, setImgSrc] = useState<File>()
-
+    const [loading,setLoading] = useState(false)
+    const nav = useNavigate()
     const fileInputRef = useRef<HTMLInputElement>(null)
+    
     const emailInputRef = useRef<HTMLInputElement>(null)
     const firstNameRef = useRef<HTMLInputElement>(null)
     const lastNameRef = useRef<HTMLInputElement>(null)
@@ -28,10 +33,11 @@ function Registration() {
     }
 
     const register = async () => {
-        const url = await uploadPhoto(imgSrc!);
-        console.log("upload returned:" + url);
+    
         if (emailInputRef.current?.value && passwordInputRef.current?.value
-            && firstNameRef?.current?.value && lastNameRef?.current?.value) {
+            && firstNameRef?.current?.value && lastNameRef?.current?.value
+            && imgSrc) {
+            const url = await uploadPhoto(imgSrc!);
             const user: IUser = {
                 email: emailInputRef.current?.value,
                 password: passwordInputRef.current?.value,
@@ -41,7 +47,12 @@ function Registration() {
                 posts:[],
             }
             const res = await registrUser(user)
-            console.log(res)
+            if(res) {
+                nav("/login")
+                toast.success("נרשמת בהצלחה, מוזמן להתחבר!:)")
+            }
+        } else {
+            toast.error("בבקשה מלא את כל השדות ובחר תמונת פרופיל:)")
         }
     }
 
@@ -59,7 +70,7 @@ function Registration() {
         console.log("Google login failed")
     }
     return (
-        <div className="vstack gap-3 col-md-7 mx-auto">
+        <form className="vstack gap-3 col-md-7 mx-auto">
             <h1 className='text-center p-2 font-bold text-[32px]'>Register</h1>
             <div className="d-flex justify-content-center position-relative">
                 <img src={imgSrc ? URL.createObjectURL(imgSrc) : avatar} style={{ height: "230px", width: "230px" }} className="img-fluid" />
@@ -68,30 +79,32 @@ function Registration() {
                 </button>
             </div>
 
-            <input style={{ display: "none" }} ref={fileInputRef} type="file" onChange={imgSelected}></input>
+            <input style={{ display: "none" }} required ref={fileInputRef} type="file" onChange={imgSelected}></input>
 
             <div className="form-floating">
-                <input ref={emailInputRef} type="text" className="form-control" id="floatingInput" placeholder="" />
-                <label htmlFor="floatingInput">Email</label>
+                <input ref={emailInputRef} required type="email" className="form-control" id="floatingInput" placeholder="" />
+                <label htmlFor="floatingInput">אימייל</label>
             </div>
             <div className="form-floating">
-                <input ref={emailInputRef} type="text" className="form-control" id="floatingInput" placeholder="" />
-                <label htmlFor="floatingInput">First name</label>
-            </div>
-
-            <div className="form-floating">
-                <input ref={emailInputRef} type="text" className="form-control" id="floatingInput" placeholder="" />
-                <label htmlFor="floatingInput">Last name</label>
+                <input ref={firstNameRef} required type="text" className="form-control" id="floatingInput" placeholder="" />
+                <label htmlFor="floatingInput">שם פרטי</label>
             </div>
 
             <div className="form-floating">
-                <input ref={passwordInputRef} type="password" className="form-control" id="floatingPassword" placeholder="" />
-                <label htmlFor="floatingPassword">Password</label>
+                <input ref={lastNameRef}  required type="text" className="form-control" id="floatingInput" placeholder="" />
+                <label htmlFor="floatingInput">שם משפחה</label>
             </div>
-            <button type="button" className="text-white bg-[var(--color-green-light-2)] font-bold text-[20px] hover:opacity-[0.8] p-2 rounded-md" onClick={register}>Register</button>
+
+            <div className="form-floating">
+                <input ref={passwordInputRef} required type="password" className="form-control" id="floatingPassword" placeholder="" />
+                <label htmlFor="floatingPassword">סיסמה</label>
+            </div>
+            <button  style={{background: loading ? "gray" : "white", color:'black'}} disabled={loading} type="button" className=" bg-[var(--color-green-light-2)] font-bold text-[20px] hover:opacity-[0.8] p-2 rounded-md" onClick={register}>Register</button>
 
             <GoogleLogin onSuccess={onGoogleLoginSuccess} onError={onGoogleLoginFailure} />
-        </div>)
+
+            {loading && <Spinner spinnerSize='lg'/>}
+        </form>)
 }
 
 export default AlreadyLoggedGuard(Registration)

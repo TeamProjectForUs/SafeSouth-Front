@@ -10,8 +10,10 @@ export default function AuthorizedGuard<T>(
         const { user,loading } = useAuth()
         if(!user && !loading) {
             return <div>
-                <span>You must be logged in to view this page</span>
-                <Link to="/login">Login now</Link>
+                <p>
+                    <span>.הינך חייב להיות מחובר על מנת לצפות בעמוד זה</span>
+                </p>
+                <Link to="/login">התחבר</Link>
             </div>
         }
         return <Component {...props as any}/>

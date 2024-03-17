@@ -18,7 +18,6 @@ export const registrUser = (user: Partial<IUser>) => {
 }
 export const loginUser = (email: string, password: string) => {
     return new Promise<IToken>((resolve, reject) => {
-        console.log("Logging in user...")
         axios.post("/auth/login", {email, password}).then((response) => {
             console.log(response)
             resolve(response.data)

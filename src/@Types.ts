@@ -21,11 +21,14 @@ export interface IPost {
     owner: string | IUser;
     imgUrl?: string;
     comments: IComment[];
+    post_owner_email: string
+    post_owner_phone: string
     post_owner_first_name: string,
     post_owner_last_name: string,
     date_start: Date,
     date_end: Date,
     location: string,
+    capacity: number
     kosher_home: boolean,
     shabat_save: boolean,
     animals_home: boolean,
