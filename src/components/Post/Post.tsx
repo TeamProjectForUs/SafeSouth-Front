@@ -1,59 +1,43 @@
-import { IPost } from "../../@Types";
+import { IPost, IPostWithOwner, IUser } from "../../@Types";
+import {  faComment} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { usePosts } from "../../context/PostContext";
+import { useAuth } from "../../context/AuthContext";
 
 export interface IPostProps {
-    post: IPost
+    post: IPostWithOwner
 }
 
 export default function Post({post}: IPostProps) {
+    const {openActivePost} = usePosts()
+    const {user} = useAuth()
     return (
-        <div className="p-2" style={{ textAlign: 'right' }}>
-            <div>
-                {post.post_owner_first_name + "  " + post.post_owner_last_name}
-            </div>
-            <h1>
-                 {post.title}
-                 <p>
-                    {post.message}
-                </p>
-                <p>
-                    {post.location}, תאריכים: &nbsp; {post.date_start.toDateString()} - {post.date_end.toDateString()}
-                </p>
-            </h1>
-          
-            <div className="text-[12px] text-gray d-flex">
-                <div className="flex-grow-1">
-                    <label className="checkbox-label">
-                        <input type="checkbox" checked={post.handicap_home} disabled />
-                        בית נגיש לנכים.
-                    </label>
+        <div className="p-2 text-right rtl flex flex-row items-center gap-4" dir="rtl">
+            {typeof post.owner === 'object' && <img  className="rounded-full w-[70px] h-[70px]" src={post.owner.imgUrl}/>}
+            
+            <div className="grid gap-[2px]">
+                <div>
+                    {post.post_owner_first_name + "  " + post.post_owner_last_name}
                 </div>
-                <div className="flex-grow-1">
-                    <label className="checkbox-label">
-                        <input type="checkbox" checked={post.animals_home} disabled />
-                        מקבלים חיות מחמד.
-                    </label>
-                </div>
-                <div className="flex-grow-1">
-                    <label className="checkbox-label">
-                        <input type="checkbox" checked={post.kosher_home} disabled />
-                        בית שומר כשרות.
-                    </label>
-                </div>
-                <div className="flex-grow-1">
-                    <label className="checkbox-label">
-                        <input type="checkbox" checked={post.shabat_save} disabled />
-                        בית שומר שבת.
-                    </label>
-                </div>
-            </div>
+                <h1>
+                    <p>
+                        {post.message}
+                    </p>
+                    <p className="text-[gray]">
+                        {post.location}, תאריכים: &nbsp; {post.date_start.toDateString()} - {post.date_end.toDateString()}
+                    </p>
+                </h1>
 
-            <div>
-                .יכולים לארח עד: &nbsp;&nbsp; {post.capacity}  נפשות
+                <div className="flex items-center gap-2" onClick={() => {
+                    openActivePost(post)
+                }}>
+                <FontAwesomeIcon icon={faComment}/>
+                {post.comments.length ?
+                <span>{post.comments.length} Comments</span>
+                : <span>No comments</span>} 
+                    </div>               
             </div>
-            <div>
-                טלפון: &nbsp;&nbsp; {post.post_owner_phone}
-            </div>
-        
+          
         </div>
     );
 }

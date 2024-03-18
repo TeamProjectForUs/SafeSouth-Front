@@ -11,7 +11,7 @@ import { Link } from "react-router-dom";
 
 export default function PostComments() {
 
-    const {activePost, addComment, closeActivePost} = usePosts()
+    const {activePost, addComment, openActivePost, closeActivePost} = usePosts()
     const ref = useRef<HTMLInputElement | null>(null)
     const {user}  = useAuth()
 
@@ -22,7 +22,9 @@ export default function PostComments() {
             message: val,
             comment_owner_name: user?.first_name + " " + user?.last_name
         }
-        if(await addComment(activePost!._id, cmt)) {
+        const commentPosted = await addComment(activePost!._id, cmt)
+        if(commentPosted && activePost) {
+            openActivePost({...activePost, comments: [...activePost.comments, commentPosted]})
             toast.success("Comment posted")
         }  else {
             toast.error("Could not post comment, please try again later")
@@ -32,20 +34,22 @@ export default function PostComments() {
     return <div className="fixed grid items-center top-0 left-0 right-0 bottom-0 bg-[rgba(0,0,0,0.5)]">
        <FontAwesomeIcon color="white" size='3x' className="fixed cursor-pointer top-[2rem] right-[2rem]" icon={faClose} onClick={() => closeActivePost()}/>
       
-       <div className="flex flex-col relative items-center min-w-[300px] w-[60%] mx-auto max-w-[800px] min-h-[200px] bg-white rounded-md">
-       <div className="max-h-[400px] overflow-y-scroll">
+       <div className="flex flex-col relative py-[2rem]  items-center min-w-[400px] w-[60%] mx-auto max-w-[800px] min-h-[200px] bg-white rounded-md">
+       <div className="max-h-[400px] py-[1rem] w-full px-[1rem] max-w-[80%] overflow-y-scroll">
+           <h2 className="font-bold text-[20px]">אל תתביישו, הוסיפו תגובה על הפוסט:</h2>
             {activePost.comments.map(comment => 
-            <div key={comment._id} className="">
+            <div key={comment._id} className="p-4">
             <span> {comment.comment_owner_name}</span>
             <p>{comment.message}</p>
+            <hr/>
             </div>)}
         </div>
         {activePost.comments.length < 1  &&<div className="text-[24px] mt-[1.5rem] mb-[.5rem]">
-            No comments..
+           !תהיה הראשון להגיב על הפוסט
             </div>}
 
            {!user && <div className="text-[gray] text-[20px] text-center">
-                You must be <Link className="text-blue-500" to="/login" onClick={() => closeActivePost()}>logged in</Link> to comment on this post
+               יש  <Link className="text-blue-500" to="/login" onClick={() => closeActivePost()}>להתחבר</Link> .על מנת להגיב על הפוסט
             </div>}
 
         {user && <div className="w-[80%] mt-[1rem]" style={{display:'grid', gridTemplateColumns:'85% 15%', placeItems:'center', marginInline:'auto'}}>

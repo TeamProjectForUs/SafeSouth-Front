@@ -4,6 +4,9 @@ import * as postService from "../services/post-service";
 import { useAuth } from "./AuthContext";
 export interface IPostContext {
     posts: IPostWithOwner[],
+    activePost: IPostWithOwner | null
+    openActivePost: (post: IPostWithOwner) => void
+    closeActivePost:  () => void
     addPost: (post: Partial<IPost>, imageFile?: File) => Promise<IPostWithOwner| null>
     deletePost: (postId: string) => Promise<IPostWithOwner | null>
     editPost: (post: Partial<IPost>, imageFile?: File) => Promise<IPostWithOwner | null>
@@ -23,6 +26,7 @@ const normalizePosts = (posts: IPostWithOwner[] ) => {
 
 export const PostContextProvider = ({children} : {children: React.ReactNode}) => {
     const [posts, setPosts] = useState<IPostWithOwner[]>([])
+    const [activePost, setActivePost] = useState<IPostWithOwner | null>(null)
     const {user, setUser} = useAuth()
 
     useEffect(() => {
@@ -122,15 +126,25 @@ export const PostContextProvider = ({children} : {children: React.ReactNode}) =>
         }   
         return null
     }
+
+    function openActivePost(p: IPostWithOwner) {
+        setActivePost(p)
+    }
+    function closeActivePost() {
+        setActivePost(null)
+    }
     
 
     return <PostContext.Provider value={{
          posts, 
+         activePost,
          addPost,
          deletePost,
          editPost,
          addComment,
-         deleteComment
+         deleteComment,
+         openActivePost,
+         closeActivePost
         }}>
         {children}
     </PostContext.Provider>

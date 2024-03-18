@@ -11,6 +11,13 @@ import { useAuth } from "./context/AuthContext"
 import { useCallback } from "react"
 import Welcome from "./pages/Welcome"
 import Profile from "./pages/Profile"
+
+import logo from './assets/logo.png'
+import PostComments from "./components/Post/PostComments"
+
+const Logo = () => {
+  return <img src={logo} className="mx-auto my-4"/>
+}
 function App() {
   const {user} = useAuth()
 
@@ -23,6 +30,8 @@ function App() {
   return (
     <div>
       <Navbar/>
+      <Logo/>
+      <PostComments/>
       <Routes>
         <Route index element={<HomeComponent/>}/>
         <Route path="/feed"  element={<Feed/>}/>
