@@ -17,13 +17,13 @@ export default function Navbar() {
         }
         if(!user) {
             return <div className="flex flex-row gap-2">
-                 <Link to="/login" className="text-black font-bold">Login</Link>
-                 <Link to="/register" className="text-black font-bold">Register</Link>
+                 <Link to="/login" className="text-black font-bold">התחבר</Link>
+                 <Link to="/" className="text-black font-bold">הירשם</Link>
             </div>
         }
         if(user) {
             return <div className="flex flex-row gap-4 items-center">
-                 <Link to="/profile" className="text-black font-bold">Profile</Link>
+                 <Link to="/profile" className="text-black font-bold">פרופיל</Link>
                  <div className="text-black" onClick={() => {
                     Modal.confirm({
                         title: "Safe south",

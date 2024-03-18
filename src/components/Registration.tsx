@@ -71,7 +71,7 @@ function Registration() {
     }
     return (
         <form className="vstack gap-3 col-md-7 mx-auto">
-            <h1 className='text-center p-2 font-bold text-[32px]'>Register</h1>
+            <h1 className='text-center p-2 font-bold text-[32px]'>הירשמות</h1>
             <div className="d-flex justify-content-center position-relative">
                 <img src={imgSrc ? URL.createObjectURL(imgSrc) : avatar} style={{ height: "230px", width: "230px" }} className="img-fluid" />
                 <button type="button" className="btn position-absolute bottom-0 end-0" onClick={selectImg}>
@@ -99,7 +99,7 @@ function Registration() {
                 <input ref={passwordInputRef} required type="password" className="form-control" id="floatingPassword" placeholder="" />
                 <label htmlFor="floatingPassword">סיסמה</label>
             </div>
-            <button  style={{background: loading ? "gray" : "white", color:'black'}} disabled={loading} type="button" className=" bg-[var(--color-green-light-2)] font-bold text-[20px] hover:opacity-[0.8] p-2 rounded-md" onClick={register}>Register</button>
+            <button  style={{background: loading ? "gray" : "white", color:'black'}} disabled={loading} type="button" className=" bg-[var(--color-green-light-2)] font-bold text-[20px] hover:opacity-[0.8] p-2 rounded-md" onClick={register}>הירשם</button>
 
             <GoogleLogin onSuccess={onGoogleLoginSuccess} onError={onGoogleLoginFailure} />
 
