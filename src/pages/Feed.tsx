@@ -10,7 +10,7 @@ export default function Feed() {
     const {sortedPosts}= usePosts()
     const {user} = useAuth()
     return <div className="flex flex-col">
-        {user && <Link to="/create-post/null" className="p-2  w-fit self-end mx-[1.5rem]">
+        {user && <Link to="/create-post/new" className="p-2  w-fit self-end mx-[1.5rem]">
             <FontAwesomeIcon icon={faAdd} className="fa-xl" />
         </Link>}
         <PostList posts={sortedPosts}/>

@@ -30,7 +30,7 @@ export default function PostComments() {
 
     const onSubmitComment = async () => {
         const val = ref.current?.value
-        if(!val) return toast.info("Comment must not be empty")
+        if(!val) return toast.info(".התגובה לא יכולה להיות ריקה")
         const cmt = {
             message: val,
             comment_owner_name: user?.first_name + " " + user?.last_name
@@ -38,7 +38,7 @@ export default function PostComments() {
         const commentPosted = await addComment(activePost!._id, cmt)
         if(commentPosted && activePost) {
             openActivePost({...activePost, comments: [...activePost.comments, commentPosted]})
-            toast.success("Comment posted")
+            toast.success("(:התגובה פורסמה")
             if(ref.current)
                 ref.current.value =""
         }  else {

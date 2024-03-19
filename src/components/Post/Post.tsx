@@ -32,7 +32,7 @@ export default function Post<T extends IPost>({post}: IPostProps<T>) {
                 </div>
                 <h1>
                    
-                    <p>
+                    <p className="sm:w-[400px]  md:w-[400px] lg:w-[700px]">
                         {post.message}
                     </p>
                     <p className="text-[gray] w-max">
@@ -50,14 +50,14 @@ export default function Post<T extends IPost>({post}: IPostProps<T>) {
                     </div>               
             </div>
             {!isProfilePage &&<div className="w-full text-start text-blue-500 text-[18px] cursor-pointer" onClick={() => nav(`/post-page/${post._id}`)}>
-                        Watch post
+                        צפה בפוסט
             </div>}
           {isCurrentUserOwner && isProfilePage && <div>
             <div 
                 onClick={() => nav(`/create-post/${post._id}`)}
                 className="flex flex-row items-center gap-2">
             <FontAwesomeIcon icon={faEdit}/>
-                <span>Edit</span>
+                <span>ערוך</span>
             </div>
             <div
             onClick={() => {
@@ -69,16 +69,16 @@ export default function Post<T extends IPost>({post}: IPostProps<T>) {
                     okText:"כן מחק",
                     onOk: async () => {
                         if(await deletePost(post._id)) {
-                            toast.success("פוסט נמחק בהצלחה")
+                            toast.success(".הפוסט נמחק בהצלחה")
                         } else {
-                            toast.error("אירעתה שגיאה בעת מחיקת הפוסט, אנא נסה שוב מאוחר יותר")
+                            toast.error(".אירעתה שגיאה בעת מחיקת הפוסט, אנא נסה שוב מאוחר יותר")
                         }
                     }
                 })
             }}
             className="flex flex-row items-center gap-2">
             <FontAwesomeIcon icon={faRemove}/>
-                <span>Delete</span>
+                <span>מחק</span>
             </div>
           </div>}
         </div>

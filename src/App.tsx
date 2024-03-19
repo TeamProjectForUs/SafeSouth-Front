@@ -31,17 +31,7 @@ function App() {
     return <Welcome/>
   },[user])
 
-  useEffect(() => {
-    const f = async() => {
-     try {
-      const m = await completions()
-      console.log(m)
-     }catch(e) {
-      console.log(e)
-     }
-    }
-    f()
-  },[])
+ 
   return (
     <div>
       <Navbar/>

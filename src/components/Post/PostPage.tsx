@@ -31,9 +31,9 @@ export default function PostPage() {
             <div>
                 {post.post_owner_first_name + "  " + post.post_owner_last_name}
             </div>
-            <h1>
+            <h1 className="max-w-[500px] mx-auto">
                  {post.title}
-                 <p>
+                 <p style={{ fontWeight: 'bold' }}>
                     {post.message}
                 </p>
                 <p className="w-max">
@@ -72,18 +72,18 @@ export default function PostPage() {
             </div>
             <br/>
             <div dir="rtl">
-                .יכולים לארח עד: &nbsp;&nbsp; {post.capacity ?? 1}  נפשות
+                יכולים לארח עד: &nbsp;&nbsp; {post.capacity ?? 1}  נפשות.
             </div>
             <div>
                 טלפון: &nbsp;&nbsp; {post.post_owner_phone}
             </div>
-            <b className="pt-3">
+            <b className="pt-5">
             <div>תגובות</div>
             </b>
             <button className="border-[1px] translate-x-[-72px] border-[gray] rounded-full p-2 self-end " onClick={() => {
                 const defaultImage = "https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg"
                 if(post.imgUrl ===defaultImage ) {
-                    toast.info("This post has no images..")
+                    toast.info(".לפוסט זה אין תמונות")
                     return;
                 }
                 setShowingImages(true)

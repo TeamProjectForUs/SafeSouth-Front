@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import {toast} from 'react-toastify'
-import { loginUser } from '../services/user-service'
+import { googleSignin, loginUser } from '../services/user-service'
 import { useAuth } from '../context/AuthContext'
 import AlreadyLoggedGuard from '../guards/AlreadyLoggedguard'
 import Spinner from './Spinner'
+import { CredentialResponse, GoogleLogin } from '@react-oauth/google'
+import { IToken } from '../@Types'
 function Login() {
     const {setToken} = useAuth()
     const [loading,setLoading] = useState(false)
@@ -28,6 +30,30 @@ function Login() {
         },2000)
     }
 
+    const onGoogleLoginSuccess = async (credentialResponse: CredentialResponse) => {
+        console.log(credentialResponse)
+        try {
+            const res = await googleSignin(credentialResponse)
+            if(res.accessToken) {
+                const t : IToken = {
+                    accessToken:res.accessToken,
+                    refreshToken:res.refreshToken ?? "",
+                }
+                localStorage.setItem('token', JSON.stringify(t))
+                setToken(t)
+                toast.success("התחברת בהצלחה!")
+            }else {
+                toast.error("שגיאה לא מוכרת צצה, אנא נסה שוב מאוחר יותר:)")
+            }
+            console.log(res)
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    const onGoogleLoginFailure = () => {
+        console.log("Google login failed")
+    }
     return (
         <form onSubmit={login} className="vstack gap-3 col-md-7 mx-auto w-[80%] max-w-[500px]">
             <br/>
@@ -41,6 +67,7 @@ function Login() {
                 <label htmlFor="floatingPassword">סיסמה</label>
             </div>
             <button style={{background: loading ? "gray" : "white"}} disabled={loading} className="text-black bg-[white] border-[1px] border-[black] mx-auto max-w-[100px] w-[50%] font-bold text-[20px] hover:opacity-[0.8] px-4 py-2 rounded-full flex items-center justify-center" type="submit">התחבר</button>
+            <GoogleLogin onSuccess={onGoogleLoginSuccess} onError={onGoogleLoginFailure} />
         
             {loading && <Spinner spinnerSize='lg'/>}
         </form>)
