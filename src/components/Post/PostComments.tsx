@@ -5,8 +5,21 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useAuth } from "../../context/AuthContext";
 import sendIcon from '../../assets/icons8-send-48.png'
 import { toast } from "react-toastify";
-import { Link } from "react-router-dom";
+import { Link, useFetcher } from "react-router-dom";
+import { IComment, ICommentWithUser } from "../../@Types";
 
+
+export function CommentList<T extends IComment[]>({comments} : {comments: T}) {
+    return  <div className="max-h-[400px] py-[1rem] w-full px-[1rem] max-w-[80%] overflow-y-scroll">
+    <h2 className="font-bold text-[20px]">אל תתביישו, הוסיפו תגובה על הפוסט:</h2>
+     {comments.map(comment => 
+     <div key={comment._id} className="p-4">
+     <span> {comment.comment_owner_name}</span>
+     <p>{comment.message}</p>
+     <hr/>
+     </div>)}
+ </div>
+}
 
 
 export default function PostComments() {
@@ -26,24 +39,20 @@ export default function PostComments() {
         if(commentPosted && activePost) {
             openActivePost({...activePost, comments: [...activePost.comments, commentPosted]})
             toast.success("Comment posted")
+            if(ref.current)
+                ref.current.value =""
         }  else {
             toast.error("Could not post comment, please try again later")
         }
+
     }
     if(!activePost) return null
+
     return <div className="fixed grid items-center top-0 left-0 right-0 bottom-0 bg-[rgba(0,0,0,0.5)]">
        <FontAwesomeIcon color="white" size='3x' className="fixed cursor-pointer top-[2rem] right-[2rem]" icon={faClose} onClick={() => closeActivePost()}/>
       
        <div className="flex flex-col relative py-[2rem]  items-center min-w-[400px] w-[60%] mx-auto max-w-[800px] min-h-[200px] bg-white rounded-md">
-       <div className="max-h-[400px] py-[1rem] w-full px-[1rem] max-w-[80%] overflow-y-scroll">
-           <h2 className="font-bold text-[20px]">אל תתביישו, הוסיפו תגובה על הפוסט:</h2>
-            {activePost.comments.map(comment => 
-            <div key={comment._id} className="p-4">
-            <span> {comment.comment_owner_name}</span>
-            <p>{comment.message}</p>
-            <hr/>
-            </div>)}
-        </div>
+       <CommentList comments={activePost.comments}/>
         {activePost.comments.length < 1  &&<div className="text-[24px] mt-[1.5rem] mb-[.5rem]">
            !תהיה הראשון להגיב על הפוסט
             </div>}
@@ -53,7 +62,7 @@ export default function PostComments() {
             </div>}
 
         {user && <div className="w-[80%] mt-[1rem]" style={{display:'grid', gridTemplateColumns:'85% 15%', placeItems:'center', marginInline:'auto'}}>
-            <input type="text" className="outline-none  p-3 w-full border-[1px] border-[lightgray] rounded-md" placeholder="Post a comment.." ref={ref}/>
+            <input type="text" className="outline-none  p-3 w-full border-[1px] border-[lightgray] rounded-md" placeholder="כתוב תגובה כאן" ref={ref}/>
            <div>
            <img  src={sendIcon} width={30} height={30} onClick={onSubmitComment}/>
             </div>

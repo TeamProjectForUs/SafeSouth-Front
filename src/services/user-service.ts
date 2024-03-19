@@ -16,6 +16,19 @@ export const registrUser = (user: Partial<IUser>) => {
         })
     })
 }
+
+export const editUser = (user: Partial<IUser>,editedPass: boolean) => {
+    return new Promise<IUser>((resolve, reject) => {
+        delete user._id
+        axios.put("/auth", {user, editedPass}).then((response) => {
+            console.log(response)
+            resolve(response.data)
+        }).catch((error) => {
+            console.log(error)
+            reject(error)
+        })
+    })
+}
 export const loginUser = (email: string, password: string) => {
     return new Promise<IToken>((resolve, reject) => {
         axios.post("/auth/login", {email, password}).then((response) => {

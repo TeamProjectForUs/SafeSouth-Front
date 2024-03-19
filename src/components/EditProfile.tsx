@@ -3,15 +3,17 @@ import avatar from '../assets/avatar.jpeg'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faImage } from '@fortawesome/free-solid-svg-icons'
 import { uploadPhoto } from '../services/file-service'
-import { registrUser, googleSignin } from '../services/user-service'
+import { registrUser, googleSignin, editUser } from '../services/user-service'
 import { CredentialResponse, GoogleLogin } from '@react-oauth/google'
 import AlreadyLoggedGuard from '../guards/AlreadyLoggedguard'
 import { IUser } from '../@Types'
 import Spinner from './Spinner'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router'
+import { useAuth } from '../context/AuthContext'
+import AuthorizedGuard from '../guards/AuthorizedGuard'
 
-function Registration() {
+function EditProfile() {
     const [imgSrc, setImgSrc] = useState<File>()
     const [loading,setLoading] = useState(false)
     const nav = useNavigate()
@@ -32,84 +34,70 @@ function Registration() {
         fileInputRef.current?.click()
     }
 
-    const register = async () => {
-    
-        if (emailInputRef.current?.value && passwordInputRef.current?.value
-            && firstNameRef?.current?.value && lastNameRef?.current?.value
-            && imgSrc) {
-            const url = await uploadPhoto(imgSrc!);
+    const edit = async () => {
+        if(!currentUser) return
+        if (firstNameRef?.current?.value && lastNameRef?.current?.value) {
+            let url : string | undefined  = ""
+            if(imgSrc) {
+                url = await uploadPhoto(imgSrc!);
+            }else {
+                url = currentUser.imgUrl
+            }
+            let pass = '';
+            if(passwordInputRef.current?.value && passwordInputRef.current?.value?.length > 0) {
+                pass = passwordInputRef.current?.value
+            } else {
+                pass = currentUser.password
+            }
             const user: IUser = {
-                email: emailInputRef.current?.value,
-                password: passwordInputRef.current?.value,
+                email: currentUser.email, 
+                password: pass ,
                 first_name: firstNameRef.current?.value,
                 last_name: lastNameRef.current?.value,
                 imgUrl: url,
-                posts:[],
+                posts:currentUser.posts.map(p => p._id),
             }
-            const res = await registrUser(user)
+            const res = await editUser(user, pass !== currentUser.password)
             if(res) {
                 nav("/login")
-                toast.success("נרשמת בהצלחה, מוזמן להתחבר!:)")
+                toast.success("פרטים נשמרו בהצלחה !:)")
             }
         } else {
             toast.error("בבקשה מלא את כל השדות ובחר תמונת פרופיל:)")
         }
     }
 
-    const onGoogleLoginSuccess = async (credentialResponse: CredentialResponse) => {
-        console.log(credentialResponse)
-        try {
-            const res = await googleSignin(credentialResponse)
-            console.log(res)
-        } catch (e) {
-            console.log(e)
-        }
-    }
-
-    const onGoogleLoginFailure = () => {
-        console.log("Google login failed")
-    }
+    const {user: currentUser} = useAuth()
     return (
         <form className="vstack gap-3 col-md-7 mx-auto">
-            <h1 className='text-center p-2 font-bold text-[32px]'>הירשמות</h1>
+            <h1 className='text-center p-2 font-bold text-[32px]'>עריכת פרופיל</h1>
             <div className="d-flex justify-content-center position-relative">
-                <img src={imgSrc ? URL.createObjectURL(imgSrc) : avatar} style={{ height: "230px", width: "230px" }} className="object-contain" />
+                <img src={(imgSrc ? URL.createObjectURL(imgSrc) : currentUser?.imgUrl ) ?? avatar} style={{ height: "230px", width: "230px" }} className="object-contain" />
                 <button type="button" className="btn position-absolute bottom-0 end-0" onClick={selectImg}>
                     <FontAwesomeIcon icon={faImage} className="fa-xl" />
                 </button>
             </div>
 
             <input style={{ display: "none" }} required ref={fileInputRef} type="file" onChange={imgSelected}></input>
-
             <div className="form-floating">
-                <input ref={emailInputRef} required type="email" className="form-control" id="floatingInput" placeholder="" />
-                <label htmlFor="floatingInput">אימייל</label>
-            </div>
-            <div className="form-floating">
-                <input ref={firstNameRef} required type="text" className="form-control" id="floatingInput" placeholder="" />
+                <input ref={firstNameRef} defaultValue={currentUser?.first_name} required type="text" className="form-control" id="floatingInput" placeholder="" />
                 <label htmlFor="floatingInput">שם פרטי</label>
             </div>
 
             <div className="form-floating">
                 <input ref={lastNameRef}  required type="text" className="form-control" id="floatingInput" placeholder="" />
-                <label htmlFor="floatingInput">שם משפחה</label>
+                <label htmlFor="floatingInput" defaultValue={currentUser?.last_name}>שם משפחה</label>
             </div>
 
             <div className="form-floating">
-                <input ref={passwordInputRef} required type="password" className="form-control" id="floatingPassword" placeholder="" />
+                <input ref={passwordInputRef} type="password" className="form-control" id="floatingPassword" placeholder="" />
                 <label htmlFor="floatingPassword">סיסמה</label>
             </div>
-            <button  style={{background: loading ? "gray" : "white", color:'black'}} 
-            
-            
-            disabled={loading} type="button" 
-            
-            className="p-4 mb-[42px] border-[black] border-[1px] w-fit min-w-[200px] mx-auto bg-[var(--color-green-light-2)] font-bold text-[20px] hover:opacity-[0.8] p-2 rounded-full" onClick={register}>הירשם</button>
-
-            {/*<GoogleLogin onSuccess={onGoogleLoginSuccess} onError={onGoogleLoginFailure} /> */}
+            <button  style={{background: loading ? "gray" : "white", color:'black'}} disabled={loading} type="button"
+             className=" bg-[var(--color-green-light-2)] font-bold text-[20px] hover:opacity-[0.8] p-2 rounded-md" onClick={edit}>שמור פרטים</button>
 
             {loading && <Spinner spinnerSize='lg'/>}
         </form>)
 }
 
-export default AlreadyLoggedGuard(Registration)
+export default AuthorizedGuard(EditProfile)

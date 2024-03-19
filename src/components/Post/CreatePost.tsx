@@ -1,22 +1,38 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage } from '@fortawesome/free-solid-svg-icons'
-import React, { ChangeEvent, useRef, useState } from "react";
+import React, { ChangeEvent, useMemo, useRef, useState } from "react";
 import avatar from '../../assets/avatar.jpeg'
 import { IPost } from "../../@Types";
 import { toast } from "react-toastify";
 import Spinner from "../Spinner";
 import AuthorizedGuard from "../../guards/AuthorizedGuard";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { usePosts } from "../../context/PostContext";
+import { useAuth } from "../../context/AuthContext";
+
+export const dateToString = (date: Date | undefined,rev:boolean = false) => {
+    if(!date) return undefined
+    let m =( "0" + (date.getMonth() + 1)).slice(-2)
+    let d =( "0" + date.getDate()).slice(-2)
+    if(rev) {
+        return `${d}-${m}-${date.getFullYear()}`
+    }
+    return `${date.getFullYear()}-${m}-${d}`
+}
 
 
 function CreatePost() {
 
+    const {existingPostId} = useParams()
     const nav = useNavigate()
+    const {user} = useAuth()
     const [imgSrc, setImgSrc] = useState<File | undefined>()
     const [loading,setLoading] = useState(false)
-    const {addPost} = usePosts()
+    const {addPost,posts,editPost} = usePosts()
     const fileInputRef = useRef<HTMLInputElement>(null)
+    const existingPost = useMemo(() => posts?.find(p => p._id === existingPostId),[existingPostId, posts])
+
+
     const selectImg = () => {
         fileInputRef.current?.click()
     }
@@ -34,14 +50,31 @@ function CreatePost() {
         data["kosher_home"] = data["kosher_home"] === 'on'
         data["animals_home"] = data["animals_home"] === 'on'
         data["shabat_save"] = data["shabat_save"] === 'on'
+        data["post_owner_first_name"] = user?.first_name
+        data["post_owner_last_name"] = user?.last_name
         data["handicap_home"] = data["handicap_home"] === 'on'
         delete data["imgSrc"]
         try {
           
             const newPost: IPost = {...data, imgUrl: imgSrc}
-            const res = await addPost(newPost, imgSrc)
-            toast.success("Post uploaded successfully! you may view it on your post section in profile page")
-            nav("/")    
+            if(existingPost) {
+                newPost._id = existingPost._id
+                const res = await editPost(newPost, imgSrc)
+                if(res) {
+                    toast.success("Post saved successfully! you may view it on your post section in profile page")
+                    nav("/")    
+                }else {
+                    toast.error("Please check all the fields, and try again")
+                }
+            }else {
+                const res = await addPost(newPost, imgSrc)
+                if(res) {
+                    toast.success("Post uploaded successfully! you may view it on your post section in profile page")
+                    nav("/")    
+                } else {
+                    toast.error("Please check all the fields, and try again")
+                }
+            }
         } catch(e: any) {
            toast.error(e.message) 
         } finally {
@@ -52,81 +85,88 @@ function CreatePost() {
     
 
     return (
-        <form onSubmit={onSubmitPost} className="vstack gap-3 col-md-7 mx-auto w-[80%] max-w-[500px] mb-[1rem]">
+        <form onSubmit={onSubmitPost} dir="ltr" className="gap-3 justify-start mb-[4rem] flex flex-col items-center mx-auto w-[80%] max-w-[500px]">
             <br/>
-            <h1 className='text-center p-2 font-bold text-[32px]'>New Post</h1>
-            <div className="d-flex justify-content-center position-relative">
-                {imgSrc &&<img src={imgSrc ? URL.createObjectURL(imgSrc) : avatar} style={{ height: "230px", width: "230px" }} className="img-fluid" />}
-                <label>הוסף תמונה של אזור האירוח</label>
-                <button type="button" className="btn position-absolute bottom-0 end-0" onClick={selectImg}>
-                    <FontAwesomeIcon icon={faImage} className="fa-xl" />
-                </button>
+            <h1 className='text-center p-2 font-bold text-[32px]'>
+                {existingPost ? "Edit post" : "New Post"}
+            </h1>
+     
+            <div className="flex flex-row items-center gap-2 justify-start w-[300px]">
+                <input defaultValue={existingPost?.location} type="text" name="location" required className="outline-none border-none" id="floatingLocation-7" placeholder="" />
+                <label dir="rtl" htmlFor="floatingLocation-7">אזור מגורים:</label>
+            </div>
+            <div className="flex flex-row items-center " dir="rtl">
+                <div className="flex flex-row items-center gap-2 justify-start w-[300px]" dir="rtl">
+                    <label dir="rtl" htmlFor="floatingInput-3">יכול לארח מהתאריך:</label>
+                    <input type="date" defaultValue={dateToString(existingPost?.date_start)} name="date_start" required className="outline-none border-none" id="floatingInput-3" placeholder="" />
+                </div>
+                <div className="flex flex-row items-center gap-2 justify-start w-[300px]" dir="rtl">
+                <label dir="rtl" htmlFor="floatingInput-4">עד התאריך:</label>
+                    
+                    <input type="date" defaultValue={dateToString(existingPost?.date_end)} name="date_end"  required className="outline-none border-none" id="floatingInput-4" placeholder="" />
+                </div>
+            </div>
+
+          
+            <div className="flex flex-row items-center gap-2 justify-start w-[300px]">
+                <input type="tel" defaultValue={existingPost?.post_owner_phone} name="post_owner_phone" required className="outline-none border-none" id="floatingInput-17" placeholder="" />
+                <label dir="rtl" htmlFor="floatingInput-16">מספר טלפון ליצירת קשר:</label>
+            </div>
+            <div className="flex flex-row items-center gap-2 justify-start w-[300px]">
+                <input type="email" defaultValue={existingPost?.post_owner_email} name="post_owner_email" required className="outline-none border-none" id="floatingInput-16" placeholder="" />
+                <label dir="rtl" className="w-full" htmlFor="floatingInput-16">אימייל:</label>
+            </div>
+            <div className="flex flex-row items-center gap-2">
+                <input type="text" defaultValue={existingPost?.title} name="title" required className="outline-none border-none" id="floatingInput-1" placeholder="" />
+                <label dir="rtl" htmlFor="floatingInput-1">כותרת הפוסט:</label>
+            </div>
+            <div className="flex flex-row items-center gap-2">
+                <input type="number" defaultValue={existingPost?.capacity} name="capacity" required className="outline-none border-none" id="floatingInput-1" placeholder="" />
+                <label dir="rtl" htmlFor="floatingInput-1">מספר אורחים אפשרי:</label>
+            </div>
+           
+            <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-row items-center gap-2">
+                <label dir="rtl" htmlFor="floatingLocation-8">בית שומר כשרות.</label>
+                    
+                    <input type="checkbox" defaultChecked={existingPost?.kosher_home} name="kosher_home" className="form-check-input" id="floatingLocation-8" placeholder="" />
+                </div>
+                <div className="flex flex-row items-center gap-2">
+                   
+                <label dir="rtl" htmlFor="floatingLocation-9">בית שומר שבת.</label>
+                    <input type="checkbox" defaultChecked={existingPost?.shabat_save} name="shabat_save" className="form-check-input" id="floatingLocation-9" placeholder="" />
+                </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-row items-center gap-2">
+                <label dir="rtl" htmlFor="floatingLocation-10">מקבלים עם חיות מחמד.</label>
+                    <input type="checkbox" defaultChecked={existingPost?.animals_home} name="animals_home" className="form-check-input" id="floatingLocation-10" placeholder="" />
+                </div>
+                <div className="flex flex-row items-center gap-2">
+                <label dir="rtl" htmlFor="floatingLocation-11">בית נגיש לנכים.</label>
+                    <input type="checkbox" defaultChecked={existingPost?.handicap_home} name="handicap_home" className="form-check-input" id="floatingLocation-11" placeholder="" />
+                </div>
+            </div>
+            <div className="flex flex-row items-center justify-center gap-4 translate-x-[5rem]">
+                <div className="flex flex-col items-center gap-2">
+                    <label dir="rtl" htmlFor="floatingInput-2">תוכן הפוסט:</label>
+                    <input defaultValue={existingPost?.message} type="text" name="message" required className="outline-none border-none min-h-[100px] max-h-[100px] bg-[lightgray] rounded-lg min-w-[350px] px-4" dir="rtl" id="floatingInput-2" placeholder="" />
+                    <button style={{background: loading ? "gray" : "white"}} disabled={loading} className="text-black bg-[white] border-[1px] mt-[.5rem] border-[black] mx-auto max-w-[300px] w-[50%] font-bold text-[20px] hover:opacity-[0.8] px-4 py-2 rounded-full flex items-center justify-center" type="submit">
+                        {existingPost ? "Save post" : "Create post"}
+                    </button>
+                </div>
+
+                <div className="flex flex-col gap-2 max-w-[180px] mb-[62px] text-center self-end">
+                    <label dir="rtl">הוסף תמונה של אזור האירוח</label>
+                    
+                    {(imgSrc || existingPost?.imgUrl) &&<img src={(imgSrc ? URL.createObjectURL(imgSrc) : existingPost?.imgUrl ) ?? avatar} style={{ height: "230px", width: "230px" ,objectFit:'contain'}}  />}
+                    <button type="button" className="btn bottom-0 end-0" onClick={selectImg}>
+                        <FontAwesomeIcon icon={faImage} className="fa-xl" />
+                    </button>
+                </div>
             </div>
             <input style={{ display: "none" }} name="imgSrc" ref={fileInputRef} type="file" onChange={imgSelected}></input>
-            <div className="form-floating">
-                <input type="text" name="post_owner_first_name" required className="form-control" id="floatingInput-5" placeholder="" />
-                <label htmlFor="floatingInput-5">שם פרטי:</label>
-            </div>
-            <div className="form-floating">
-                <input type="text" name="post_owner_last_name" required className="form-control" id="floatingInput-6" placeholder="" />
-                <label htmlFor="floatingInput-6">שם משפחה:</label>
-            </div>
-            <div className="form-floating">
-                <input type="text" name="location" required className="form-control" id="floatingLocation-7" placeholder="" />
-                <label htmlFor="floatingLocation-7">אזור מגורים:</label>
-            </div>
-            <div className="form-floating">
-                <input type="date" name="date_start" required className="form-control" id="floatingInput-3" placeholder="" />
-                <label htmlFor="floatingInput-3">יכול לארח מהתאריך:</label>
-            </div>
-            <div className="form-floating">
-                <input type="date" name="date_end" required className="form-control" id="floatingInput-4" placeholder="" />
-                <label htmlFor="floatingInput-4">עד התאריך:</label>
-            </div>
-            <div className="form-floating">
-                <input type="number" name="capacity" required className="form-control" id="floatingInput-18" placeholder="" />
-                <label htmlFor="floatingInput-18">מספר אורחים אפשרי:</label>
-            </div>
-            <div className="form-floating">
-                <input type="tel" name="post_owner_phone" required className="form-control" id="floatingInput-17" placeholder="" />
-                <label htmlFor="floatingInput-16">מספר טלפון ליצירת קשר:</label>
-            </div>
-            <div className="form-floating">
-                <input type="email" name="post_owner_email" required className="form-control" id="floatingInput-16" placeholder="" />
-                <label htmlFor="floatingInput-16">אימייל:</label>
-            </div>
-
-            <div className="d-flex">
-                <div className="form-check flex-grow-1">
-                    <input type="checkbox" name="kosher_home" className="form-check-input" id="floatingLocation-8" placeholder="" />
-                    <label htmlFor="floatingLocation-8">בית שומר כשרות.</label>
-                </div>
-                <div className="form-check flex-grow-1">
-                    <input type="checkbox" name="shabat_save" className="form-check-input" id="floatingLocation-9" placeholder="" />
-                    <label htmlFor="floatingLocation-9">בית שומר שבת.</label>
-                </div>
-            </div>
-            <div className="d-flex">
-                <div className="form-check flex-grow-1">
-                    <input type="checkbox" name="animals_home" className="form-check-input" id="floatingLocation-10" placeholder="" />
-                    <label htmlFor="floatingLocation-10">מקבלים עם חיות מחמד.</label>
-                </div>
-                <div className="form-check flex-grow-1">
-                    <input type="checkbox" name="handicap_home" className="form-check-input" id="floatingLocation-11" placeholder="" />
-                    <label htmlFor="floatingLocation-11">בית נגיש לנכים.</label>
-                </div>
-            </div>
-            <div className="form-floating">
-                <input type="text" name="title" required className="form-control" id="floatingInput-1" placeholder="" />
-                <label htmlFor="floatingInput-1">כותרת הפוסט:</label>
-            </div>
-            <div className="form-floating">
-                <input type="text" name="message" required className="form-control" id="floatingInput-2" placeholder="" />
-                <label htmlFor="floatingInput-2">תוכן הפוסט:</label>
-            </div>
-
-            <button style={{background: loading ? "gray" : "white"}} disabled={loading} className="text-black bg-[white] border-[1px] border-[black] mx-auto max-w-[300px] w-[50%] font-bold text-[20px] hover:opacity-[0.8] px-4 py-2 rounded-full flex items-center justify-center" type="submit">Create post</button>
-            
+        
             {loading && <Spinner spinnerSize='lg'/>}
         </form>)
 }

@@ -4,8 +4,9 @@ import * as postService from "../services/post-service";
 import { useAuth } from "./AuthContext";
 export interface IPostContext {
     posts: IPostWithOwner[],
-    activePost: IPostWithOwner | null
-    openActivePost: (post: IPostWithOwner) => void
+    activePost: IPost | null
+    sortedPosts: IPostWithOwner[],
+    openActivePost: <T extends IPost>(post: T) => void
     closeActivePost:  () => void
     addPost: (post: Partial<IPost>, imageFile?: File) => Promise<IPostWithOwner| null>
     deletePost: (postId: string) => Promise<IPostWithOwner | null>
@@ -20,13 +21,14 @@ const normalizePosts = (posts: IPostWithOwner[] ) => {
    return posts.map(p => {
         p['date_end'] = new Date(p['date_end'])
         p['date_start'] = new Date(p['date_start'])
+        p["created_at"] = new Date(p["created_at"])
         return p
     })
 }
 
 export const PostContextProvider = ({children} : {children: React.ReactNode}) => {
     const [posts, setPosts] = useState<IPostWithOwner[]>([])
-    const [activePost, setActivePost] = useState<IPostWithOwner | null>(null)
+    const [activePost, setActivePost] = useState<IPost | null>(null)
     const {user, setUser} = useAuth()
 
     useEffect(() => {
@@ -43,6 +45,17 @@ export const PostContextProvider = ({children} : {children: React.ReactNode}) =>
         }
         fetchPosts()
     }, [])
+
+    useEffect(() => { 
+        if(posts &&posts.length > 0) {
+            setSortedPosts(posts.sort((p1, p2) => {
+                if(p2.created_at && p1.created_at)
+                    return p2.created_at.getTime() - p1.created_at.getTime()
+                return 0
+            }))
+        }
+    }, [posts])
+    const [sortedPosts,setSortedPosts] = useState<IPostWithOwner[]>([])
     
 
     const addComment = async (postId:string, comment: Partial<IComment>) => {
@@ -96,6 +109,7 @@ export const PostContextProvider = ({children} : {children: React.ReactNode}) =>
 
     const editPost = async (post: Partial<IPost>, imageFile?: File) => {
         try {
+        
            const res = (await postService.editPost(post, imageFile)).res
            if(res.data) {
             const posted = res.data
@@ -127,7 +141,7 @@ export const PostContextProvider = ({children} : {children: React.ReactNode}) =>
         return null
     }
 
-    function openActivePost(p: IPostWithOwner) {
+    function openActivePost<T extends IPost>(p: T) {
         setActivePost(p)
     }
     function closeActivePost() {
@@ -137,6 +151,7 @@ export const PostContextProvider = ({children} : {children: React.ReactNode}) =>
 
     return <PostContext.Provider value={{
          posts, 
+         sortedPosts,
          activePost,
          addPost,
          deletePost,
