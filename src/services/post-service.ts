@@ -32,7 +32,7 @@ const editPost = async (post: Partial<IPost>, imageFile?: File) => {
 }
 const deletePost = async (postId:string) => {
     const abortController = new AbortController()
-    const req = axios.post<IPostWithOwner>(`post/${postId}` , { signal: abortController.signal })
+    const req = axios.delete<IPostWithOwner>(`post/${postId}` , { signal: abortController.signal })
     return { res: await req, abort: () => abortController.abort() }
 }
 
@@ -48,4 +48,4 @@ const deleteComment = async (commentId: string) => {
     return { res: await req, abort: () => abortController.abort() }
 }
 
-export default { getAllPosts, deleteComment, addComment, addPost, editPost, deletePost }
+export { getAllPosts, deleteComment, addComment, addPost, editPost, deletePost }

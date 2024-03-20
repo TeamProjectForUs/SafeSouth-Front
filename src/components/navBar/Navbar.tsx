@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import Spinner from "../Spinner"
 import {toast} from 'react-toastify';
@@ -10,23 +10,27 @@ export default function Navbar() {
 
 
     const {user,loading,logOut} = useAuth()
-
+    const {pathname} = useLocation()
     const AuthButtons = useCallback(() => {
         if(loading) {
             return <Spinner spinnerSize="sm"/>
         }
         if(!user) {
             return <div className="flex flex-row gap-2">
-                 <Link to="/login" className="text-black font-bold">Login</Link>
-                 <Link to="/register" className="text-black font-bold">Register</Link>
+                 <Link to="/login" className="text-black font-bold">התחבר</Link>
+                 <Link to="/register" className="text-black font-bold">הירשם</Link>
             </div>
         }
         if(user) {
             return <div className="flex flex-row gap-4 items-center">
-                 <Link to="/profile" className="text-black font-bold">Profile</Link>
+                 {pathname.includes("profile") ? 
+                  <Link to="/edit-profile" className="text-black font-bold">עריכת פרופיל</Link> 
+                  : <Link to="/profile" className="text-black font-bold">פרופיל</Link>
+        }
                  <div className="text-black" onClick={() => {
                     Modal.confirm({
                         title: "Safe south",
+                        okButtonProps: {className:'bg-blue-500'},
                         content:"Are you sure want to log out?",
                         onOk: () =>  {
                             logOut()
@@ -36,12 +40,12 @@ export default function Navbar() {
                  }}>Log out</div>
             </div>
         }
-    }, [user, loading])
+    }, [user, loading,pathname])
 
    return  <nav className={navBarStyle}>
-    <div className=" font-bold text-[black]">
+    <Link to="/" className=" font-bold text-[black]">
         SafeSouth
-    </div>
+    </Link>
     <div>
         <AuthButtons/>
     </div>

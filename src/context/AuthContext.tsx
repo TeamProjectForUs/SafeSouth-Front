@@ -34,6 +34,12 @@ export function AuthContextProvider({ children } : {children: ReactNode}) {
                 try {
                     const res = await axios.get("/auth/me")
                     if(res.data) {
+                        if(res.data.posts)
+                            res.data.posts = res.data.posts.map((p: any) => {
+                                p['date_end'] = new Date(p['date_end'])
+                                p['date_start'] = new Date(p['date_start'])
+                                return p
+                            })
                         setUser(res.data as IUserWithPosts)
                     }
                 }catch(e) {}

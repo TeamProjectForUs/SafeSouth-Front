@@ -17,15 +17,17 @@ export interface IUser {
 export interface IPost {
     _id: string
     title: string;
+    created_at: Date,
     message: string;
     owner: string | IUser;
     imgUrl?: string;
     comments: IComment[];
-    post_owner_first_name: string,
-    post_owner_last_name: string,
+    post_owner_email: string
+    post_owner_phone: string
     date_start: Date,
     date_end: Date,
     location: string,
+    capacity: number
     kosher_home: boolean,
     shabat_save: boolean,
     animals_home: boolean,
@@ -39,7 +41,6 @@ export interface IPostWithOwner extends IPost {
 export interface IComment {
     _id: string;
     message: string;
-    comment_owner_name?: string;
     comment_owner: (IUser | string)
     post: (string | IPost)
 }
