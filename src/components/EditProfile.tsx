@@ -20,7 +20,6 @@ function EditProfile() {
     const [loading,setLoading] = useState(false)
     const nav = useNavigate()
     const fileInputRef = useRef<HTMLInputElement>(null)
-    
     const emailInputRef = useRef<HTMLInputElement>(null)
     const firstNameRef = useRef<HTMLInputElement>(null)
     const lastNameRef = useRef<HTMLInputElement>(null)

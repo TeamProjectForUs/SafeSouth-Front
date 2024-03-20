@@ -38,4 +38,5 @@ function Profile() {
     </div>
 }
 
-export default AuthorizedGuard(Profile)
+const ProfileWithGuard = AuthorizedGuard(Profile);
+export default ProfileWithGuard;
