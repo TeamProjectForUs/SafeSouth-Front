@@ -8,14 +8,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { dateToString } from "./CreatePost";
 
 export function CommentList2<T extends IComment[]>({comments} : {comments: T}) {
-    return  <div className="max-h-[400px] py-[1rem] w-[50%]  px-[1rem] max-w-[400px] no-scrollbar min-w-[200px] overflow-y-scroll">
+    return  <div className="max-h-[400px] py-[1rem] w-[70%]  px-[1rem] max-w-[400px] no-scrollbar min-w-[200px] overflow-y-scroll">
      {comments.map(comment => 
-     <div key={comment._id} className="p-4">
+     <div key={comment._id} className="p-2">
       {typeof comment.comment_owner === 'object' && <span> {comment.comment_owner.first_name + " " + comment.comment_owner.last_name}</span>}
      <p className="rounded-full p-2 bg-[lightgray]">{comment.message}</p>
      </div>)}
  </div>
 }
+// a note for me
+
 
 export default function PostPage() {
     const  {posts} = usePosts()
@@ -90,7 +92,7 @@ export default function PostPage() {
             }}>תמונות</button>
             <CommentList2 comments={post.comments}/>
             {showingImages && <div className="fixed bg-[rgba(0,0,0,0.5)] grid items-center top-0 bottom-0 left-0 right-0">
-                <div className="min-w-[600px] rounded-lg grid place-items-center grid-cols-1 grid-rows-1 p-4 w-[60%] max-w-[600px] mx-auto min-h-[300px] bg-white">
+                <div className="min-w-[300px] rounded-lg grid place-items-center grid-cols-1 grid-rows-1 p-4 w-[60%] max-w-[600px] mx-auto min-h-[300px] bg-white">
                     <img src={post.imgUrl} className="object-contain w-[200px] h-[200px] rounded-full" alt="No provided"/>
                 </div>
                 <FontAwesomeIcon color="white" size='3x' className="fixed cursor-pointer top-[2rem] right-[2rem]" icon={faClose} onClick={() => {setShowingImages(false)}}/>
