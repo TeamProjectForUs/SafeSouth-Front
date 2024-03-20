@@ -72,7 +72,7 @@ export default function PostPage() {
             </div>
             <br/>
             <div dir="rtl">
-                יכולים לארח עד: &nbsp;&nbsp; {post.capacity ?? 1}  &nbsp;&nbsp;נפשות.
+                יכולים לארח עד: &nbsp;&nbsp; {post.capacity ?? 1} &nbsp;&nbsp;נפשות.
             </div>
             <div>
                 טלפון: &nbsp;&nbsp; {post.post_owner_phone}
@@ -90,12 +90,12 @@ export default function PostPage() {
             }}>תמונות</button>
             <CommentList2 comments={post.comments}/>
             {showingImages && <div className="fixed bg-[rgba(0,0,0,0.5)] grid items-center top-0 bottom-0 left-0 right-0">
-                <div className="min-w-[300px] rounded-lg grid place-items-center grid-cols-1 grid-rows-1 p-4 w-[60%] max-w-[600px] mx-auto min-h-[300px] bg-white">
+                <div className="min-w-[600px] rounded-lg grid place-items-center grid-cols-1 grid-rows-1 p-4 w-[60%] max-w-[600px] mx-auto min-h-[300px] bg-white">
                     <img src={post.imgUrl} className="object-contain w-[200px] h-[200px] rounded-full" alt="No provided"/>
                 </div>
                 <FontAwesomeIcon color="white" size='3x' className="fixed cursor-pointer top-[2rem] right-[2rem]" icon={faClose} onClick={() => {setShowingImages(false)}}/>
       
-                </div>}          
+            </div>}          
         </div>      
     );
 }

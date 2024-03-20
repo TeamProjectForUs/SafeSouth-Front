@@ -24,8 +24,7 @@ export default function Post<T extends IPost>({post}: IPostProps<T>) {
     return (
         <div className="p-2 text-right rtl flex flex-row items-center gap-4" dir="rtl">
             
-            {typeof post.owner === 'object' && <img  className="rounded-full object-contain w-[70px] h-[70px]" src={post.owner.imgUrl}/>}
-            
+            {typeof post.owner === 'object' && <img  className="rounded-full object-contain w-[70px] min-w-[100px] max-w-[100px] h-[70px]" src={post.owner.imgUrl}/>}
             <div className="grid gap-[2px] w-full">
                 <div>
                     {typeof post.owner === 'object' && post.owner.first_name + "  " + post.owner.last_name}

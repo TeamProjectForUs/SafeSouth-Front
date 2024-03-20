@@ -34,6 +34,10 @@ export default function PostComments() {
         const cmt = {
             message: val,
         }
+        if(!user?.first_name || !user.last_name || user.first_name.length <= 0 || user.last_name.length <=0) {
+            toast.info("יש לערוך פרטים אישיים בעמוד פרופיל על מנת להגיב")
+            return;
+        }
         const commentPosted = await addComment(activePost!._id, cmt)
         if(commentPosted && activePost) {
             openActivePost({...activePost, comments: [...activePost.comments, commentPosted]})
@@ -57,7 +61,7 @@ export default function PostComments() {
             </div>}
 
            {!user && <div className="text-[gray] text-[20px] text-center">
-               יש  <Link className="text-blue-500" to="/login" onClick={() => closeActivePost()}>להתחבר</Link> .על מנת להגיב על הפוסט
+               יש  <Link className="text-blue-500" to="/login" onClick={() => closeActivePost()}>להתחבר</Link> על מנת להגיב על הפוסט
             </div>}
 
         {user && <div className="w-[80%] mt-[1rem]" style={{display:'grid', gridTemplateColumns:'85% 15%', placeItems:'center', marginInline:'auto'}}>

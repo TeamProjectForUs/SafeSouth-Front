@@ -13,8 +13,8 @@ export default function Welcome() {
                 <p>!הצטרפו למטרה, הרתמו לעשייה, וביחד ננצח</p>
             </div>
             <div className="m-20 mb-30 min-w-[80%] flex flex-row items-center justify-around"> {/* Added mb-10 to create more space from the top */}
-                <Link className={btnStyle} to="/register">אשמח לארח</Link>
                 <Link className={btnStyle} to="/feed">אשמח להתארח</Link>
+                <Link className={btnStyle} to="/register">אשמח לארח</Link>
             </div>
         </div>
     );

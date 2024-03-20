@@ -50,7 +50,12 @@ function CreatePost() {
 
     async function onSubmitPost(e: React.FormEvent) {
         e.preventDefault()
+        if(!user?.first_name || !user.last_name || user.first_name.length <= 0 || user.last_name.length <=0) {
+            toast.info("יש לערוך פרטים אישיים בעמוד פרופיל על מנת לפרסם פוסט")
+            return;
+        }
         setLoading(true)
+        
         const data:any = Object.fromEntries(new FormData(e.target as HTMLFormElement).entries())
         data["kosher_home"] = data["kosher_home"] === 'on'
         data["animals_home"] = data["animals_home"] === 'on'
