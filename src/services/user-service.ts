@@ -1,6 +1,6 @@
 import { CredentialResponse } from "@react-oauth/google"
 import axios from 'axios'
-import { IToken, IUser } from "../@Types"
+import { IToken, IUser, IUserWithPosts } from "../@Types"
 
 
 export const registrUser = (user: Partial<IUser>) => {
@@ -18,7 +18,7 @@ export const registrUser = (user: Partial<IUser>) => {
 }
 
 export const editUser = (user: Partial<IUser>,editedPass: boolean) => {
-    return new Promise<IUser>((resolve, reject) => {
+    return new Promise<IUserWithPosts>((resolve, reject) => {
         delete user._id
         axios.put("/auth", {user, editedPass}).then((response) => {
             console.log(response)

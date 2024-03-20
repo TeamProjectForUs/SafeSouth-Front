@@ -60,12 +60,20 @@ export const PostContextProvider = ({children} : {children: React.ReactNode}) =>
 
     const addComment = async (postId:string, comment: Partial<IComment>) => {
         try {
-            if(user)
-                comment.comment_owner_name = user?.first_name + " " + user?.last_name
            const res = (await postService.addComment(postId, comment)).res
            if(res.data) {
             const posted = res.data
             setPosts(posts.map(post => post._id === postId ? {...post, comments: [...post.comments, res.data]}: post))
+
+            const foundPost = user?.posts.find(p => p._id === postId)
+            if(foundPost && user) {
+                setUser({...user, posts: user.posts.map(p => {
+                    if(p._id === foundPost._id) {
+                        return {...p, comments:[...p.comments, res.data]}
+                    }
+                    return p
+                })})
+            }
             return posted
            }
         } catch(e) {
@@ -89,10 +97,6 @@ export const PostContextProvider = ({children} : {children: React.ReactNode}) =>
 
     const addPost = async (post: Partial<IPost>, imageFile?: File) => {
         try {
-            if(user)  {
-                post.post_owner_first_name = user?.first_name
-                post.post_owner_last_name = user?.last_name
-            }
            const res = (await postService.addPost(post, imageFile)).res
            if(res.data) {
             const posted = res.data

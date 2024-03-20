@@ -24,8 +24,6 @@ export interface IPost {
     comments: IComment[];
     post_owner_email: string
     post_owner_phone: string
-    post_owner_first_name: string,
-    post_owner_last_name: string,
     date_start: Date,
     date_end: Date,
     location: string,
@@ -43,7 +41,6 @@ export interface IPostWithOwner extends IPost {
 export interface IComment {
     _id: string;
     message: string;
-    comment_owner_name?: string;
     comment_owner: (IUser | string)
     post: (string | IPost)
 }

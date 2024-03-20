@@ -8,7 +8,7 @@ export interface IPostListProps<T extends IPost> {
 }
 
 export default function PostList<T extends IPost>({posts}: IPostListProps<T>) {
-    return <div className="grid items-center text-[22px] gap-4  w-[80%] min-w-[400px] mx-auto">
+    return <div className="grid items-center text-[22px] gap-4  w-[70%] min-w-[400px] mx-auto">
         {posts.map(post => <div key={post._id}>
             <Post post={post}/>
         </div>)}

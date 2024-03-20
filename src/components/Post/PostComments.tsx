@@ -14,8 +14,8 @@ export function CommentList<T extends IComment[]>({comments} : {comments: T}) {
     <h2 className="font-bold text-[20px]">אל תתביישו, הוסיפו תגובה על הפוסט:</h2>
      {comments.map(comment => 
      <div key={comment._id} className="p-4">
-     <span> {comment.comment_owner_name}</span>
-     <p>{comment.message}</p>
+     {typeof comment.comment_owner === 'object' && <span> {comment.comment_owner.first_name + " " + comment.comment_owner.last_name}</span>}
+    <p>{comment.message}</p>
      <hr/>
      </div>)}
  </div>
@@ -33,7 +33,6 @@ export default function PostComments() {
         if(!val) return toast.info(".התגובה לא יכולה להיות ריקה")
         const cmt = {
             message: val,
-            comment_owner_name: user?.first_name + " " + user?.last_name
         }
         const commentPosted = await addComment(activePost!._id, cmt)
         if(commentPosted && activePost) {
@@ -42,7 +41,7 @@ export default function PostComments() {
             if(ref.current)
                 ref.current.value =""
         }  else {
-            toast.error("Could not post comment, please try again later")
+            toast.error(".לא ניתן לפרסם את התגובה כרגע, אנא נסה שנית מאוחר יותר")
         }
 
     }

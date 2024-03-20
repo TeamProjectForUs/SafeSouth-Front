@@ -51,10 +51,10 @@ function Registration() {
             const res = await registrUser(user)
             if(res) {
                 nav("/login")
-                toast.success("נרשמת בהצלחה, מוזמן להתחבר!:)")
+                toast.success("(:!נרשמת בהצלחה, מוזמן להתחבר")
             }
         } else {
-            toast.error("בבקשה מלא את כל השדות ובחר תמונת פרופיל:)")
+            toast.error("(:בבקשה מלא את כל השדות ובחר תמונת פרופיל")
         }
     }
 
@@ -64,7 +64,7 @@ function Registration() {
             const res = await googleSignin(credentialResponse)
             if(res.accessToken) {
                 nav("/login")
-                toast.success("נרשמת בהצלחה, מוזמן להתחבר!:)")
+                toast.success("(:!נרשמת בהצלחה, מוזמן להתחבר")
             }
             console.log(res)
         } catch (e) {

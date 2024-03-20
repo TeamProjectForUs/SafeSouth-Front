@@ -55,8 +55,6 @@ function CreatePost() {
         data["kosher_home"] = data["kosher_home"] === 'on'
         data["animals_home"] = data["animals_home"] === 'on'
         data["shabat_save"] = data["shabat_save"] === 'on'
-        data["post_owner_first_name"] = user?.first_name
-        data["post_owner_last_name"] = user?.last_name
         data["handicap_home"] = data["handicap_home"] === 'on'
         delete data["imgSrc"]
         try {

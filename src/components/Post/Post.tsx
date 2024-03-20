@@ -28,7 +28,7 @@ export default function Post<T extends IPost>({post}: IPostProps<T>) {
             
             <div className="grid gap-[2px] w-full">
                 <div>
-                    {post.post_owner_first_name + "  " + post.post_owner_last_name}
+                    {typeof post.owner === 'object' && post.owner.first_name + "  " + post.owner.last_name}
                 </div>
                 <h1>
                    

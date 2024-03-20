@@ -41,9 +41,9 @@ function Login() {
                 }
                 localStorage.setItem('token', JSON.stringify(t))
                 setToken(t)
-                toast.success("התחברת בהצלחה!")
+                toast.success("!התחברת בהצלחה")
             }else {
-                toast.error("שגיאה לא מוכרת צצה, אנא נסה שוב מאוחר יותר:)")
+                toast.error("(:שגיאה לא מוכרת צצה, אנא נסה שוב מאוחר יותר")
             }
             console.log(res)
         } catch (e) {

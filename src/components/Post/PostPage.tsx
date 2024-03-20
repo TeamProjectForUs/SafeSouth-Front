@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { IComment, IPost } from "../../@Types";
+import { IComment } from "../../@Types";
 import {faClose} from '@fortawesome/free-solid-svg-icons';
 import { usePosts } from "../../context/PostContext";
 import { useParams } from "react-router";
@@ -11,7 +11,7 @@ export function CommentList2<T extends IComment[]>({comments} : {comments: T}) {
     return  <div className="max-h-[400px] py-[1rem] w-[50%]  px-[1rem] max-w-[400px] no-scrollbar min-w-[200px] overflow-y-scroll">
      {comments.map(comment => 
      <div key={comment._id} className="p-4">
-     <span className="py-2 font-bold"> {comment.comment_owner_name}</span>
+      {typeof comment.comment_owner === 'object' && <span> {comment.comment_owner.first_name + " " + comment.comment_owner.last_name}</span>}
      <p className="rounded-full p-2 bg-[lightgray]">{comment.message}</p>
      </div>)}
  </div>
@@ -29,7 +29,7 @@ export default function PostPage() {
 
             <img src={post.owner.imgUrl} className="w-[100px] object-contain h-[100px] rounded-full" alt="No provided"/>
             <div>
-                {post.post_owner_first_name + "  " + post.post_owner_last_name}
+                {post.owner.first_name + "  " + post.owner.last_name}
             </div>
             <h1 className="max-w-[500px] mx-auto">
                  {post.title}
@@ -72,7 +72,7 @@ export default function PostPage() {
             </div>
             <br/>
             <div dir="rtl">
-                יכולים לארח עד: &nbsp;&nbsp; {post.capacity ?? 1}  נפשות.
+                יכולים לארח עד: &nbsp;&nbsp; {post.capacity ?? 1}  &nbsp;&nbsp;נפשות.
             </div>
             <div>
                 טלפון: &nbsp;&nbsp; {post.post_owner_phone}

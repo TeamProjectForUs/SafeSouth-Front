@@ -61,15 +61,16 @@ function EditProfile() {
             }
             const res = await editUser(user, pass !== currentUser.password)
             if(res) {
+                setUser(res)
                 nav("/login")
-                toast.success("פרטים נשמרו בהצלחה !:)")
+                toast.success("(:!הפרטים נשמרו בהצלחה")
             }
         } else {
-            toast.error("בבקשה מלא את כל השדות ובחר תמונת פרופיל:)")
+            toast.error("(:אנא מלא את כל השדות ובחר תמונת פרופיל")
         }
     }
 
-    const {user: currentUser} = useAuth()
+    const {user: currentUser, setUser} = useAuth()
     const [showingImages, setShowingImages] = useState(false)
     return (
         <form className="vstack gap-3 col-md-7 mx-auto">

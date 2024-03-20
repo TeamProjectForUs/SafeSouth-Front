@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext"
 import AuthorizedGuard from "../guards/AuthorizedGuard"
 import {faClose} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Link } from "react-router-dom";
 
 
 function Profile() {
@@ -19,7 +20,12 @@ function Profile() {
         }
        }}src={user.imgUrl} height={100} className="rounded-full object-contain w-[100px] h-[100px]"></img>
         <p className="font-bold p-2">
-            {user.first_name + " " + user.last_name}
+            {user.first_name ? <div>
+                {user.first_name + " " + user.last_name}
+            </div> : <div className="flex flex-col items-center">
+               <span>ערוך שם משתמש בעמוד </span>
+               <Link to="/edit-profile" className="text-blue-500">עריכת פרופיל</Link>
+                </div>}
         </p>
        </div>
        <PostList posts={user.posts}/>
