@@ -7,7 +7,7 @@ export default function AlreadyLoggedGuard<T>(
     Component: FunctionComponent<T>
 ){
     return function useGuard(props: T) {
-        const { user,loading } = useAuth()
+        const { user, loading } = useAuth()
         if(user && !loading) {
             return <Navigate to="/"/>
         }

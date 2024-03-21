@@ -74,7 +74,7 @@ function CreatePost() {
                 }else {
                     toast.error(".אנא מלא את כל השדות ונסה שנית")
                 }
-            }else {
+            } else {
                 const res = await addPost(newPost, imgSrc)
                 if(res) {
                     toast.success("!הפוסט פורסם בהצלחה")

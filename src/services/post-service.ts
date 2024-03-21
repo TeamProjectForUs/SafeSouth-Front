@@ -20,6 +20,7 @@ const addPost = async (post: Partial<IPost>, imageFile?: File) => {
     const req = axios.post<IPostWithOwner>('post', post , { signal: abortController.signal })
     return { res: await req, abort: () => abortController.abort() }
 }
+
 const editPost = async (post: Partial<IPost>, imageFile?: File) => {
     const abortController = new AbortController()
     if(imageFile) {
@@ -42,6 +43,7 @@ const addComment = async (postId:string, comment: Partial<IComment>) => {
     const req = axios.post<ICommentWithUser>(`postComment/${postId}`, comment , { signal: abortController.signal })
     return { res: await req, abort: () => abortController.abort() }
 }
+
 const deleteComment = async (commentId: string) => {
     const abortController = new AbortController()
     const req = axios.delete<IComment>(`postComment/${commentId}` , { signal: abortController.signal })

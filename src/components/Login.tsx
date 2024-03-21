@@ -19,7 +19,7 @@ function Login() {
                 localStorage.setItem('token', JSON.stringify(token))
                 setToken(token)
                 toast.success("התחברת בהצלחה!")
-            }else {
+            } else {
                 toast.error("שגיאה לא מוכרת צצה, אנא נסה שוב מאוחר יותר:)")
             }
         } catch(e: any) {

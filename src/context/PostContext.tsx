@@ -47,7 +47,7 @@ export const PostContextProvider = ({children} : {children: React.ReactNode}) =>
     }, [])
 
     useEffect(() => { 
-        if(posts &&posts.length > 0) {
+        if(posts && posts.length > 0) {
             setSortedPosts(posts.sort((p1, p2) => {
                 if(p2.created_at && p1.created_at)
                     return p2.created_at.getTime() - p1.created_at.getTime()

@@ -17,10 +17,10 @@ export const registrUser = (user: Partial<IUser>) => {
     })
 }
 
-export const editUser = (user: Partial<IUser>,editedPass: boolean) => {
+export const editUser = (user: Partial<IUser>, editedPass: boolean) => {
     return new Promise<IUserWithPosts>((resolve, reject) => {
         delete user._id
-        axios.put("/auth", {user, editedPass}).then((response) => {
+        axios.put("/auth", { user, editedPass }).then((response) => {
             console.log(response)
             resolve(response.data)
         }).catch((error) => {
