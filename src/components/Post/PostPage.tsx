@@ -31,17 +31,22 @@ export default function PostPage() {
 
             <img src={post.owner.imgUrl} className="w-[100px] object-contain h-[100px] rounded-full" alt="No provided"/>
             <div>
-                {post.owner.first_name + "  " + post.owner.last_name}
-            </div>
-            <h1 className="max-w-[500px] mx-auto">
-                 {post.title}
-                 <p style={{ fontWeight: 'bold' }}>
-                    {post.message}
-                </p>
-                <p className="w-max">
-                    {post.location}, תאריכים: &nbsp; {dateToString(post.date_start, true)} - {dateToString(post.date_end,true)}
-                </p>
-            </h1>
+    {post.owner.first_name + "  " + post.owner.last_name}
+</div>
+<div style={{ height: '2rem' }} /> {/* Space of one line */}
+<div className="flex flex-col items-center justify-center h-full max-w-[500px] max-h-[500px]">
+    <h1 className="max-w-[500px] mx-auto text-center font-bold"> {/* Apply bold font style */}
+        {post.title}
+    </h1>
+    <p className="text-center"> {/* Remove the inline color style */}
+        {post.message}
+    </p>
+    <p className="w-max text-center font-bold"> {/* Apply bold font style */}
+        {post.location}, תאריכים: &nbsp; {dateToString(post.date_start, true)} - {dateToString(post.date_end,true)}
+    </p>
+</div>
+
+
           <br/>
           <div className="flex flex-row items-center gap-4">
           <div>פרטים:</div>

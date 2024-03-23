@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage } from '@fortawesome/free-solid-svg-icons'
 import React, { ChangeEvent, useMemo, useRef, useState } from "react";
-import avatar from '../../assets/avatar.jpeg'
+import avatar from '../../assets/avatar_pic.png'
 import { IPost } from "../../@Types";
 import { toast } from "react-toastify";
 import Spinner from "../Spinner";

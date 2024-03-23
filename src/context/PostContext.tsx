@@ -127,7 +127,6 @@ export const PostContextProvider = ({children} : {children: React.ReactNode}) =>
         }   
         return null
     }
-
      
     const deletePost = async (postId: string) => {
         try {
@@ -163,7 +162,7 @@ export const PostContextProvider = ({children} : {children: React.ReactNode}) =>
          addComment,
          deleteComment,
          openActivePost,
-         closeActivePost
+         closeActivePost,
         }}>
         {children}
     </PostContext.Provider>

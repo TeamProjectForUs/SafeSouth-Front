@@ -1,5 +1,5 @@
 import { ChangeEvent, useRef, useState } from 'react'
-import avatar from '../assets/avatar.jpeg'
+import avatar from '../assets/avatar_pic.png'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faImage } from '@fortawesome/free-solid-svg-icons'
 import { uploadPhoto } from '../services/file-service'
