@@ -29,21 +29,21 @@ export default function Navbar() {
         }
                  <div className="text-black" onClick={() => {
                     Modal.confirm({
-                        title: "Safe south",
+                        title: "Safe South",
                         okButtonProps: {className:'bg-blue-500'},
-                        content:"Are you sure want to log out?",
+                        content:"האם הינך בטוח שברצונך להתנתק?",
                         onOk: () =>  {
                             logOut()
-                            toast.info("Logged out succesfully")
+                            toast.info("!נותקת בהצלחה")
                         },
                     })
-                 }}>Log out</div>
+                 }}>התנתק</div>
             </div>
         }
     }, [user, loading,pathname])
 
    return  <nav className={navBarStyle}>
-    <Link to="/" className=" font-bold text-[black]">
+    <Link to="/" className=" text-[black]">
         SafeSouth
     </Link>
     <div>
