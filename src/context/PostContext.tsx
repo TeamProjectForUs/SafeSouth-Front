@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { IComment, ICommentWithUser, IPost, IPostWithOwner } from "../@Types";
+import { IComment, ICommentWithUser, IPost, IPostWithOwner, IUser } from "../@Types";
 import * as postService from "../services/post-service";
 import { useAuth } from "./AuthContext";
 export interface IPostContext {
@@ -8,6 +8,7 @@ export interface IPostContext {
     sortedPosts: IPostWithOwner[],
     openActivePost: <T extends IPost>(post: T) => void
     closeActivePost:  () => void
+    updatePostOwner: (owner: IUser) => void
     addPost: (post: Partial<IPost>, imageFile?: File) => Promise<IPostWithOwner| null>
     deletePost: (postId: string) => Promise<IPostWithOwner | null>
     editPost: (post: Partial<IPost>, imageFile?: File) => Promise<IPostWithOwner | null>
@@ -17,7 +18,7 @@ export interface IPostContext {
 
 const PostContext = React.createContext<IPostContext | null>(null)
 
-const normalizePosts = (posts: IPostWithOwner[] ) => {
+export function normalizePosts<T extends IPost>(posts: T[] ) {
    return posts.map(p => {
         p['date_end'] = new Date(p['date_end'])
         p['date_start'] = new Date(p['date_start'])
@@ -55,9 +56,18 @@ export const PostContextProvider = ({children} : {children: React.ReactNode}) =>
             }))
         }
     }, [posts])
-    const [sortedPosts,setSortedPosts] = useState<IPostWithOwner[]>([])
-    
 
+    const [sortedPosts,setSortedPosts] = useState<IPostWithOwner[]>([])
+
+
+    const updatePostOwner = (owner: IUser) => {
+          setPosts(posts.map(p => {
+            if(p.owner._id === owner._id) {
+                p.owner = owner
+            }
+            return p
+          }))  
+    }
     const addComment = async (postId:string, comment: Partial<IComment>) => {
         try {
            const res = (await postService.addComment(postId, comment)).res
@@ -156,6 +166,7 @@ export const PostContextProvider = ({children} : {children: React.ReactNode}) =>
          posts, 
          sortedPosts,
          activePost,
+         updatePostOwner,
          addPost,
          deletePost,
          editPost,

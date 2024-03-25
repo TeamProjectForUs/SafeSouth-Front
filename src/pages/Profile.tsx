@@ -26,7 +26,7 @@ function Profile() {
                     className="rounded-full object-contain w-[100px] h-[100px]"
                     alt="Profile"
                 />
-                <p className="font-bold p-2">
+                <div className="font-bold p-2">
                     {user.first_name ? (
                         <div>{user.first_name + " " + user.last_name}</div>
                     ) : (
@@ -37,7 +37,7 @@ function Profile() {
                             </Link>
                         </div>
                     )}
-                </p>
+                </div>
             </div>
             <div className="mb-20 " /> {/* Add margin bottom for space */}
             {/* Reverse the order of posts */}

@@ -14,11 +14,13 @@ import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router'
 import { useAuth } from '../context/AuthContext'
 import AuthorizedGuard from '../guards/AuthorizedGuard'
+import { normalizePosts, usePosts } from '../context/PostContext'
 
 function EditProfile() {
     const [imgSrc, setImgSrc] = useState<File>()
     const [loading,setLoading] = useState(false)
     const nav = useNavigate()
+    const {updatePostOwner} = usePosts()
     const fileInputRef = useRef<HTMLInputElement>(null)
     const emailInputRef = useRef<HTMLInputElement>(null)
     const firstNameRef = useRef<HTMLInputElement>(null)
@@ -60,7 +62,8 @@ function EditProfile() {
             }
             const res = await editUser(user, pass !== currentUser.password)
             if(res) {
-                setUser(res)
+                updatePostOwner(res)
+                setUser({...res, posts: normalizePosts(res.posts)})
                 nav("/login")
                 toast.success("(:!הפרטים נשמרו בהצלחה")
             }
@@ -92,8 +95,8 @@ function EditProfile() {
             </div>
 
             <div className="form-floating">
-                <input ref={lastNameRef}  required type="text" className="form-control" id="floatingInput" placeholder="" />
-                <label htmlFor="floatingInput" defaultValue={currentUser?.last_name}>שם משפחה</label>
+                <input ref={lastNameRef} defaultValue={currentUser?.last_name} required type="text" className="form-control" id="floatingInput" placeholder="" />
+                <label htmlFor="floatingInput">שם משפחה</label>
             </div>
 
             <div className="form-floating">
